@@ -1,4 +1,4 @@
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
 
 class Provider(metaclass=ABCMeta):
     """Abstract class for defining a mail-sender provider."""
@@ -12,6 +12,6 @@ class Provider(metaclass=ABCMeta):
         self.authentication = authentication
 
     @abstractmethod
-    def send(self, from, to, subject, body, attachments):
+    def send(self, sender, recipient, subject, body, attachments):
         """Default method for sending emails."""
         pass
