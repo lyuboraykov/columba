@@ -12,6 +12,6 @@ class Provider(metaclass=ABCMeta):
         self.authentication = authentication
 
     @abstractmethod
-    def send(self, sender, recipient, subject, body, attachments):
+    def send(self, sender, recipient, cc, bcc, subject, body, attachments):
         """Default method for sending emails."""
         pass
