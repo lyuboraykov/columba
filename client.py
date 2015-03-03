@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import heapq
 
 class Client(object):
@@ -5,7 +7,7 @@ class Client(object):
 
     providers = []
     
-    def send(self, sender, recipient, cc, bcc, subject, body, attachments):
+    def send(self, sender, recipients, cc, bcc, subject, body, attachments):
         """
         Sends an email.
         Uses the registered providers and failsover basen on their priority.
@@ -16,7 +18,7 @@ class Client(object):
         while len(providers_copy) > 0:
             current_provider = heappop(providers_copy)
             try:
-                current_provider.send(sender, recipient, cc, bcc, subject, body, attachments)
+                current_provider.send(sender, recipients, cc, bcc, subject, body, attachments)
                 is_mail_sent = True
                 break
             except SendError as e:
