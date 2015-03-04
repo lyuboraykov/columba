@@ -7,7 +7,7 @@ class Client(object):
 
     providers = []
     
-    def send(self, sender, recipients, cc, bcc, subject, body, attachments):
+    def send(self, sender, recipients, subject, body, cc=[], bcc=[], attachments=[]):
         """
         Sends an email.
         Uses the registered providers and failsover basen on their priority.

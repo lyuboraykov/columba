@@ -7,7 +7,7 @@ import send_error
 class SendGridProvider(Provider):
     """Avbstracts Sendgrid's python library to send email."""
     
-    def send(self, sender, recipients, cc, bcc, subject, body, attachments):
+    def send(self, sender, recipients, subject, body, cc=[], bcc=[], attachments=[]):
         """Sends email via Sendgrid, raises SendError if it fails."""
         client = sendgrid.SendGridClient(self.username, self.authentication, raise_errors=True)
         message = sendgrid.Mail()
