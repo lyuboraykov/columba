@@ -2,9 +2,10 @@
 
 import os
 from flask import Flask, request
-from providers import sendgrid
+from providers.sendgrid import SendGridProvider
 from client import Client
-import message
+from message import Message
+from send_error import SendError
 
 app = Flask(__name__)
 columba_client = Client()
@@ -22,7 +23,7 @@ def send():
         return 'sender, recipients, subject and body fields are mandatory.', 500
     try:
         columba_client.send(message)
-        return 200
+        return 'Message was sent successfully', 200
     except SendError:
         return 'Something wrong happened, email could not be sent.', 500
     return "Mail sent! {}".format(message)
@@ -59,4 +60,5 @@ def get_provider_credentials(provider):
 
 if __name__ == "__main__":
     app.debug = True
+    register_providers()
     app.run()
