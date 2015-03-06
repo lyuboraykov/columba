@@ -40,6 +40,7 @@ def get_message_from_form_data(request):
     attachments = request.form.get('attachments', default=[])
     return Message(sender, recipients, subject, body, cc, bcc, attachments)
 
+@app.before_first_request
 def register_providers():
     """Registers available providers to the main columba_client"""
     sendgrid_username, sendgrid_authentication = get_provider_credentials('sendgrid') 
@@ -60,6 +61,4 @@ def get_provider_credentials(provider):
     return username, authentication
 
 if __name__ == "__main__":
-    app.debug = True
-    register_providers()
     app.run()
