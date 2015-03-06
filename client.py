@@ -6,7 +6,8 @@ from send_error import SendError
 class Client(object):
     """Email proxy client. Abstracts registered providers."""
 
-    providers = []
+    def __init__(self):
+        self.providers = []
     
     def send(self, message):
         """
