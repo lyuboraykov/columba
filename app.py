@@ -24,7 +24,8 @@ def send():
     try:
         columba_client.send(message)
         return 'Message was sent successfully', 200
-    except SendError:
+    except SendError as e:
+        print(e)
         return 'Something wrong happened, email could not be sent.', 500
     return "Mail sent! {}".format(message)
 

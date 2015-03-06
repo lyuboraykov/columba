@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 from providers.provider import Provider
-from sendgrid import SendGridClient, Mail
-import send_error
+from sendgrid import SendGridClient, Mail, SendGridClientError, SendGridServerError
+from send_error import SendError
 
 class SendGridProvider(Provider):
     """Avbstracts Sendgrid's python library to send email."""
