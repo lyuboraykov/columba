@@ -24,7 +24,7 @@ class Client(object):
                 is_mail_sent = True
                 break
             except SendError as e:
-                error_message += 'Provider failed with: {}; \n'.format(e.value)
+                error_message += 'Provider failed with: {}; \n'.format(e)
         if not is_mail_sent:
             raise SendError(error_message)
         return
