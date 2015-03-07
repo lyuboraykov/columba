@@ -3,9 +3,11 @@
 import pytest
 
 import columba
+import init_test_objects
 
 def test_send_positive():
     """Tests calling the /send method with a sample message."""
+    init_test_objects.init_env_variables()
     test_client = columba.app.test_client()
     response = test_client.post('/send', data={
         'sender': 'sender@columba.com',

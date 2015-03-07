@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 
 import tempfile
+import os
 
 from attachment import Attachment
 from message import Message
+
+MAILGUN_TEST_DOMAIN = 'sandbox5faa34abe01446d5be16abc8077cb531.mailgun.org'
+MAILGUN_TEST_AUTHENTICATION = 'key-b5b8a218881f2d7c34b7fb14fe5deb0f'
+SENDGRID_TEST_USERNAME = 'lyuboraykov'
+SENDGRID_TEST_AUTHENTICATION = 'columbap@22'
 
 class TestRequest(object):
     """Mock request class for flask's request object"""
@@ -45,3 +51,10 @@ def init_message():
     attachments = [Attachment('test_attachment', temporary_file)]
     message = Message(sender, recipients, subject, body, cc, bcc, attachments)
     return message
+
+def init_env_variables():
+    """Initializes environment variables for the supported providers."""
+    os.environ['SENDGRID_USERNAME'] = SENDGRID_TEST_USERNAME
+    os.environ['SENDGRID_AUTHENTICATION'] = SENDGRID_TEST_AUTHENTICATION
+    os.environ['MAILGUN_USERNAME'] = MAILGUN_TEST_DOMAIN
+    os.environ['MAILGUN_AUTHENTICATION'] = MAILGUN_TEST_AUTHENTICATION
