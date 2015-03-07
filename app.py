@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import flask
 from flask import Flask, request
 from providers.sendgrid import SendGridProvider
 from providers.mailgun import MailGunProvider
@@ -12,7 +13,6 @@ from attachment import Attachment
 app = Flask(__name__)
 # Maximum of 16MB for file
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-columba_client = Client()
 
 @app.route("/send", methods=['POST'])
 def send():
@@ -26,7 +26,7 @@ def send():
     except KeyError:
         return 'sender, recipients, subject and body fields are mandatory.', 500
     try:
-        columba_client.send(message)
+        flask.g.client.send(message)
         return 'Message was sent successfully', 200
     except SendError as e:
         print(e)
@@ -52,16 +52,18 @@ def parse_attachments(request):
     return attachments
 
 @app.before_first_request
-def register_providers():
-    """Registers available providers to the main columba_client"""
+def initialize_client():
+    """Initializes the main client on flask.g and registers providers to it."""
     sendgrid_authentication, sendgrid_username = get_provider_credentials('sendgrid') 
     sendgrid_provider = SendGridProvider(sendgrid_authentication, sendgrid_username)
 
     mailgun_authentication, mailgun_domain = get_provider_credentials('mailgun')
     mailgun_provider = MailGunProvider(mailgun_authentication, mailgun_domain)
 
-    columba_client.register_provider(sendgrid_provider, 20)
-    columba_client.register_provider(mailgun_provider, 10)
+    flask.g.client = Client()
+
+    flask.g.client.register_provider(sendgrid_provider, 10)
+    flask.g.client.register_provider(mailgun_provider, 20)
 
 def get_provider_credentials(provider):
     """
