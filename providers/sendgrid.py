@@ -17,7 +17,7 @@ class SendGridProvider(Provider):
         sendgrid_message.set_subject(message.subject)
         sendgrid_message.set_html(message.body)
         for attachment in message.attachments:
-            sendgrid_message.add_attachment_stream(attachment.name, attachment.content_stream)
+            sendgrid_message.add_attachment(attachment.name, attachment.content)
         sendgrid_message.set_from(message.sender)
         try:
             client.send(sendgrid_message)

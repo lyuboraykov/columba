@@ -47,7 +47,7 @@ def parse_attachments(request):
     """Parses the attached files in the request as Attachment array"""
     attachments = []
     for name, file_content in request.files.items():
-        attachments.append(Attachment(name, file_content.read()))
+        attachments.append(Attachment(name, file_content))
     return attachments
 
 @app.before_first_request

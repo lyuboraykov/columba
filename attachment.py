@@ -3,6 +3,6 @@
 class Attachment(object):
     """Represents email attachment"""
     
-    def __init__(self, name, content_stream):
+    def __init__(self, name, content):
         self.name = name
-        self.content_stream = content_stream
+        self.content = content
