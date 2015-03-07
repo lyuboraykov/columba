@@ -35,11 +35,11 @@ def send():
 def get_message_from_form_data(request):
     """Parses the POST parameters provided to the send method."""
     sender = request.form['sender']
-    recipients = request.form['recipients'].split(',')
+    recipients = request.form['recipients'].split()
     subject = request.form['subject']
     body = request.form['body']
-    cc = request.form.get('cc', default=[])
-    bcc = request.form.get('bcc', default=[])
+    cc = request.form.get('cc', default='').split()
+    bcc = request.form.get('bcc', default='').split()
     attachments = parse_attachments(request)
     return Message(sender, recipients, subject, body, cc, bcc, attachments)
 
