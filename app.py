@@ -22,7 +22,7 @@ def send():
     Returns HTTP 500 if an error occured and logs the error.
     """
     try:
-        message = get_message_from_form_data(request)
+        message = get_message_from_request(request)
     except KeyError:
         return 'sender, recipients, subject and body fields are mandatory.', 500
     try:
@@ -33,14 +33,14 @@ def send():
         return 'Something wrong happened, email could not be sent.', 500
     return "Mail sent! {}".format(message)
 
-def get_message_from_form_data(request):
+def get_message_from_request(request):
     """Parses the POST parameters provided to the send method."""
     sender = request.form['sender']
     recipients = request.form['recipients'].split()
     subject = request.form['subject']
     body = request.form['body']
-    cc = request.form.get('cc', default='').split()
-    bcc = request.form.get('bcc', default='').split()
+    cc = request.form.get('cc', '').split()
+    bcc = request.form.get('bcc', '').split()
     attachments = parse_attachments(request)
     return Message(sender, recipients, subject, body, cc, bcc, attachments)
 
@@ -73,7 +73,7 @@ def get_provider_credentials(provider):
     uppercase_provider = provider.upper()
     username_variable = '{}_USERNAME'.format(uppercase_provider)
     authentication_variable = '{}_AUTHENTICATION'.format(uppercase_provider)
-    username = os.environ.get(username_variable, default='')
+    username = os.environ.get(username_variable, '')
     authentication = os.environ[authentication_variable]
     return authentication, username
 
