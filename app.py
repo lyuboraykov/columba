@@ -54,19 +54,20 @@ def parse_attachments(request):
 def register_providers():
     """Registers available providers to the main columba_client"""
     sendgrid_username, sendgrid_authentication = get_provider_credentials('sendgrid') 
-    sendgrid_provider = SendGridProvider(sendgrid_username, sendgrid_authentication)
+    sendgrid_provider = SendGridProvider(sendgrid_authentication, sendgrid_username)
     columba_client.register_provider(sendgrid_provider, 10)
 
 def get_provider_credentials(provider):
     """
     Provider credentials should be injected in the deployed instance as enviroment
     variables. It gets them as PROVIDER_USERNAME and PROVIDER_AUTHENTICATION
+    PROVIDER_USERNAME is optional in case the provider uses API key.
     For example, for Sendgrid it would be SENDGRID_USERNAME and SENDGRID_AUTHENTICATION.
     """
     uppercase_provider = provider.upper()
     username_variable = '{}_USERNAME'.format(uppercase_provider)
     authentication_variable = '{}_AUTHENTICATION'.format(uppercase_provider)
-    username = os.environ[username_variable]
+    username = os.environ.get(username_variable, default='')
     authentication = os.environ[authentication_variable]
     return username, authentication
 
