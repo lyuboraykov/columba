@@ -3,12 +3,12 @@
 import pytest
 
 import init_test_objects
-import app
+import columba
 
 def test_simple_parse():
     """Tests a parse of a request with single values for all parameters"""
     request = init_test_objects.init_simple_request()
-    message = app.get_message_from_request(request)
+    message = columba.get_message_from_request(request)
     assert message.sender == 'sender@columba.com'
     assert message.recipients == ['recipient@columba.com']
     assert message.cc == ['cc@columba.com']
@@ -26,7 +26,7 @@ def test_multiple_recipients_parse():
     request.form['recipients'] = 'recipient1@columba.com recipient2@columba.com'
     request.form['cc'] = 'cc1@columba.com cc2@columba.com'
     request.form['bcc'] = 'bcc1@columba.com bcc2@columba.com'
-    message = app.get_message_from_request(request)
+    message = columba.get_message_from_request(request)
     assert message.recipients == ['recipient1@columba.com', 'recipient2@columba.com']
     assert message.cc == ['cc1@columba.com', 'cc2@columba.com']
     assert message.bcc == ['bcc1@columba.com', 'bcc2@columba.com']
@@ -44,7 +44,7 @@ def test_only_mandatory_fields_parse():
         'body': 'test body'
     }
     request = init_test_objects.TestRequest(form)
-    message = app.get_message_from_request(request)
+    message = columba.get_message_from_request(request)
     assert message.cc == []
     assert message.bcc == []
     assert message.attachments == []
@@ -56,5 +56,5 @@ def test_request_with_missing_mandatory_fields():
         request = init_test_objects.init_simple_request()
         request.form.pop(field)
         with pytest.raises(KeyError) as key_error:
-            message = app.get_message_from_request(request)
+            message = columba.get_message_from_request(request)
         assert key_error
