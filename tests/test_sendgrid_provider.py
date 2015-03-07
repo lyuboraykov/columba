@@ -32,7 +32,7 @@ def test_sendgrid_send_missing_recipients():
         sendgrid_provider.send(test_message)
     assert send_error
 
-def test_sendgrid_send_missing_recipients():
+def test_sendgrid_send_missing_sender():
     """The provider should raise a SendError if it has missing sender field"""
     sendgrid_provider = SendGridProvider(TEST_AUTHENTICATION + 's', TEST_USERNAME)
     test_message = init_test_objects.init_message()
