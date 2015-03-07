@@ -6,8 +6,11 @@ from providers.sendgrid import SendGridProvider
 from client import Client
 from message import Message
 from send_error import SendError
+from attachment import Attachment
 
 app = Flask(__name__)
+# Maximum of 16MB for file
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 columba_client = Client()
 
 @app.route("/send", methods=['POST'])
@@ -37,8 +40,15 @@ def get_message_from_form_data(request):
     body = request.form['body']
     cc = request.form.get('cc', default=[])
     bcc = request.form.get('bcc', default=[])
-    attachments = request.form.get('attachments', default=[])
+    attachments = parse_attachments(request)
     return Message(sender, recipients, subject, body, cc, bcc, attachments)
+
+def parse_attachments(request):
+    """Parses the attached files in the request as Attachment array"""
+    attachments = []
+    for name, file_content in request.files.items():
+        attachments.append(Attachment(name, file_content.read()))
+    return attachments
 
 @app.before_first_request
 def register_providers():
@@ -61,4 +71,5 @@ def get_provider_credentials(provider):
     return username, authentication
 
 if __name__ == "__main__":
+    app.debug = True
     app.run()
