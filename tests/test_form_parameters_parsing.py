@@ -3,9 +3,6 @@
 import pytest
 import tempfile
 
-from client import Client
-from providers.provider import Provider
-from send_error import SendError
 import app
 
 class TestRequest(object):
