@@ -3,6 +3,7 @@
 import os
 from flask import Flask, request
 from providers.sendgrid import SendGridProvider
+from providers.mailgun import MailGunProvider
 from client import Client
 from message import Message
 from send_error import SendError
@@ -53,9 +54,14 @@ def parse_attachments(request):
 @app.before_first_request
 def register_providers():
     """Registers available providers to the main columba_client"""
-    sendgrid_username, sendgrid_authentication = get_provider_credentials('sendgrid') 
+    sendgrid_authentication, sendgrid_username = get_provider_credentials('sendgrid') 
     sendgrid_provider = SendGridProvider(sendgrid_authentication, sendgrid_username)
-    columba_client.register_provider(sendgrid_provider, 10)
+
+    mailgun_authentication, mailgun_domain = get_provider_credentials('mailgun')
+    mailgun_provider = MailGunProvider(mailgun_authentication, mailgun_domain)
+
+    columba_client.register_provider(sendgrid_provider, 20)
+    columba_client.register_provider(mailgun_provider, 10)
 
 def get_provider_credentials(provider):
     """
@@ -69,7 +75,7 @@ def get_provider_credentials(provider):
     authentication_variable = '{}_AUTHENTICATION'.format(uppercase_provider)
     username = os.environ.get(username_variable, default='')
     authentication = os.environ[authentication_variable]
-    return username, authentication
+    return authentication, username
 
 if __name__ == "__main__":
     app.debug = True
