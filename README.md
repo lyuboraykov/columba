@@ -1,7 +1,7 @@
 # Columba
 [![Build Status](https://travis-ci.org/lyuboraykov/columba.svg)](https://travis-ci.org/lyuboraykov/columba)
 
-<img align="right" height="100" src="http://www.image-share.com/upload/2878/82.png">
+<img align="right" height="100" alt="Columba logo" src="https://github.com/lyuboraykov/columba/blob/master/views/columba.png?raw=true">
 [Columba](https://github.com/lyuboraykov/columba)
 is an email sending service. 
 It supports multiple providers with failover between them.
