@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import heapq
+import logging
+
 from send_error import SendError
 
 class Client(object):
@@ -19,12 +21,16 @@ class Client(object):
         is_mail_sent = False
         while len(providers_copy) > 0:
             current_provider = heapq.heappop(providers_copy)[1] # it's a tuple with priority
+            provider_name = type(current_provider).__name__
             try:
+                logging.info('Trying to send message with {}'.format(provider_name))
                 current_provider.send(message)
                 is_mail_sent = True
                 break
             except SendError as e:
-                error_message += 'Provider failed with: {}; \n'.format(e)
+                current_provider_error = 'Provider {} failed with: {}; \n'.format(provider_name, e)
+                logging.exception(current_provider_error)
+                error_message += current_provider_error
         if not is_mail_sent:
             raise SendError(error_message)
         return

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 import os
+import logging
 import flask
 from flask import Flask, request
+
 from providers.sendgrid import SendGridProvider
 from providers.mailgun import MailGunProvider
 from client import Client
@@ -23,15 +25,17 @@ def send():
     """
     try:
         message = get_message_from_request(request)
+        logging.info('Sending message {}'.format(message))
     except KeyError:
+        logging.error('Missing mandatory fields in form request.')
         return 'sender, recipients, subject and body fields are mandatory.', 500
     try:
         flask.g.client.send(message)
+        logging.info('Sent message {}'.format(message))
         return 'Message was sent successfully', 200
     except SendError as e:
-        print(e)
+        logging.error('Message could not be sent: {}'.format(e))
         return 'Something wrong happened, email could not be sent.', 500
-    return "Mail sent! {}".format(message)
 
 def get_message_from_request(request):
     """Parses the POST parameters provided to the send method."""
@@ -54,14 +58,17 @@ def parse_attachments(request):
 @app.before_first_request
 def initialize_client():
     """Initializes the main client on flask.g and registers providers to it."""
+    logging.info('Initializing Sendgrid provider')
     sendgrid_authentication, sendgrid_username = get_provider_credentials('sendgrid') 
     sendgrid_provider = SendGridProvider(sendgrid_authentication, sendgrid_username)
 
+    logging.info('Initializing Mailgun provider')
     mailgun_authentication, mailgun_domain = get_provider_credentials('mailgun')
     mailgun_provider = MailGunProvider(mailgun_authentication, mailgun_domain)
 
     flask.g.client = Client()
 
+    logging.info('Registering providers')
     flask.g.client.register_provider(sendgrid_provider, 10)
     flask.g.client.register_provider(mailgun_provider, 20)
 
@@ -72,6 +79,7 @@ def get_provider_credentials(provider):
     PROVIDER_USERNAME is optional in case the provider uses API key.
     For example, for Sendgrid it would be SENDGRID_USERNAME and SENDGRID_AUTHENTICATION.
     """
+    logging.info('Getting provider credentials for {}'.format(provider))
     uppercase_provider = provider.upper()
     username_variable = '{}_USERNAME'.format(uppercase_provider)
     authentication_variable = '{}_AUTHENTICATION'.format(uppercase_provider)
@@ -80,5 +88,4 @@ def get_provider_credentials(provider):
     return authentication, username
 
 if __name__ == "__main__":
-    app.debug = True
     app.run()

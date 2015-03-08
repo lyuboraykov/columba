@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import requests
+
 from providers.provider import Provider
 from send_error import SendError
 
