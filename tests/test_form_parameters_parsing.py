@@ -23,7 +23,7 @@ def test_simple_parse():
 def test_multiple_recipients_parse():
     """Tests parsing a request with multiple recipients, cc and bcc"""
     request = init_test_objects.init_simple_request()
-    request.form['recipients'] = 'recipient1@columba.com recipient2@columba.com'
+    request.form['to'] = 'recipient1@columba.com recipient2@columba.com'
     request.form['cc'] = 'cc1@columba.com cc2@columba.com'
     request.form['bcc'] = 'bcc1@columba.com bcc2@columba.com'
     message = columba.get_message_from_request(request)
@@ -38,8 +38,8 @@ def test_only_mandatory_fields_parse():
     The others should get their default values.
     """
     form = {
-        'sender': 'sender@columba.com',
-        'recipients': 'recipient@columba.com',
+        'from': 'sender@columba.com',
+        'to': 'recipient@columba.com',
         'subject': 'test subject',
         'body': 'test body'
     }
@@ -51,7 +51,7 @@ def test_only_mandatory_fields_parse():
 
 def test_request_with_missing_mandatory_fields():
     """When a mandatory field is missing it shoud raise KeyError"""
-    mandatory_fields = ['sender', 'recipients', 'subject', 'body']
+    mandatory_fields = ['from', 'to', 'subject', 'body']
     for field in mandatory_fields:
         request = init_test_objects.init_simple_request()
         request.form.pop(field)

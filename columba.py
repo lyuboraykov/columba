@@ -45,8 +45,8 @@ def index():
 
 def get_message_from_request(request):
     """Parses the POST parameters provided to the send method."""
-    sender = request.form['sender']
-    recipients = request.form['recipients'].split()
+    sender = request.form['from']
+    recipients = request.form['to'].split()
     subject = request.form['subject']
     body = request.form['body']
     cc = request.form.get('cc', '').split()

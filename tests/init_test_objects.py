@@ -42,8 +42,8 @@ class TestFilesList(object):
 def init_simple_request():
     """Create a request with single values for all fields"""
     form = {
-        'sender': 'sender@columba.com',
-        'recipients': 'recipient@columba.com',
+        'from': 'sender@columba.com',
+        'to': 'recipient@columba.com',
         'cc': 'cc@columba.com',
         'bcc': 'bcc@columba.com',
         'subject': 'test subject',
