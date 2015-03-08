@@ -3,7 +3,7 @@
 import os
 import logging
 import flask
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 
 from providers.sendgrid import SendGridProvider
 from providers.mailgun import MailGunProvider
@@ -15,6 +15,7 @@ from attachment import Attachment
 app = Flask(__name__)
 # Maximum of 16MB for file
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+client = Client()
 
 @app.route("/send", methods=['POST'])
 def send():
@@ -30,12 +31,17 @@ def send():
         logging.error('Missing mandatory fields in form request.')
         return 'sender, recipients, subject and body fields are mandatory.', 500
     try:
-        flask.g.client.send(message)
+        client.send(message)
         logging.info('Sent message {}'.format(message))
         return 'Message was sent successfully', 200
     except SendError as e:
         logging.error('Message could not be sent: {}'.format(e))
         return 'Something wrong happened, email could not be sent.', 500
+
+@app.route("/")
+def index():
+    """Provides a simple form to use the API with UI"""
+    return send_from_directory('views', 'index.html')
 
 def get_message_from_request(request):
     """Parses the POST parameters provided to the send method."""
@@ -51,8 +57,8 @@ def get_message_from_request(request):
 def parse_attachments(request):
     """Parses the attached files in the request as Attachment array"""
     attachments = []
-    for name, file_content in request.files.items():
-        attachments.append(Attachment(name, file_content))
+    for attachment in request.files.getlist('attachment'):
+        attachments.append(Attachment(attachment.filename, attachment))
     return attachments
 
 @app.before_first_request
@@ -66,11 +72,9 @@ def initialize_client():
     mailgun_authentication, mailgun_domain = get_provider_credentials('mailgun')
     mailgun_provider = MailGunProvider(mailgun_authentication, mailgun_domain)
 
-    flask.g.client = Client()
-
     logging.info('Registering providers')
-    flask.g.client.register_provider(sendgrid_provider, 10)
-    flask.g.client.register_provider(mailgun_provider, 20)
+    client.register_provider(sendgrid_provider, 10)
+    client.register_provider(mailgun_provider, 20)
 
 def get_provider_credentials(provider):
     """
